@@ -1,0 +1,27 @@
+{
+  "name": "microit/store-ah-api",
+  "homepage": "https://micro-it.nl/",
+  "autoload": {
+    "psr-4": {
+      "Microit\\StoreAhApi\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Jeroen el Hahaoui",
+      "email": "jeroen@micro-it.nl"
+    }
+  ],
+  "require": {
+    "php": "^8.2",
+    "microit/store-base": "dev-main"
+  },
+  "require-dev": {
+    "vimeo/psalm": "^5.11"
+  },
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
+  }
+}
