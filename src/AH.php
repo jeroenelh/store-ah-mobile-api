@@ -38,7 +38,8 @@ class AH
                 image: (new Image(
                     url: $categoryResponse->images[0]->url,
                     width: $categoryResponse->images[0]->width,
-                    height: $categoryResponse->images[0]->height)
+                    height: $categoryResponse->images[0]->height
+                )
                 )
             ));
         }
