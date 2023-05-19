@@ -17,7 +17,8 @@
     "microit/store-base": "dev-main"
   },
   "require-dev": {
-    "vimeo/psalm": "^5.11"
+    "vimeo/psalm": "^5.11",
+    "friendsofphp/php-cs-fixer": "^3.16"
   },
   "config": {
     "allow-plugins": {
