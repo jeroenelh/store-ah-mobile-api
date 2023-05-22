@@ -8,15 +8,15 @@ class Category
     protected array $categories = [];
 
     public function __construct(
-        public readonly ?int    $id = null,
-        public readonly ?string $name = null,
-        public readonly ?string $slug = null,
-        public readonly ?string $url = null,
-        public readonly ?Image $image = null,
+        public readonly int|string|null $id = null,
+        public readonly ?string         $name = null,
+        public readonly ?string         $slug = null,
+        public readonly ?string         $url = null,
+        public readonly ?Image          $image = null,
     ) {
     }
 
-    public function getId(): int|null
+    public function getId(): int|string|null
     {
         return $this->id;
     }

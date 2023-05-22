@@ -4,6 +4,8 @@ namespace Microit\StoreAhApi;
 
 use Microit\StoreAhApi\Models\Category;
 use Microit\StoreAhApi\Models\Image;
+use Microit\StoreAhApi\Models\Product;
+use Nyholm\Psr7\Stream;
 
 class AH
 {
@@ -15,6 +17,10 @@ class AH
         $this->clientConnection = $connection;
     }
 
+    /**
+     * @return Category[]
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
     public function getCategories(): array
     {
         $request = $this->clientConnection->createRequest('get', 'mobile-services/v1/product-shelves/categories');
@@ -39,11 +45,40 @@ class AH
                     url: $categoryResponse->images[0]->url,
                     width: $categoryResponse->images[0]->width,
                     height: $categoryResponse->images[0]->height
-                )
-                )
+                ))
             ));
         }
 
         return $categories;
+    }
+
+    public function getProductsOfCategory(Category $category)
+    {
+        $fields = [
+            'query' => '',
+            'sortOn' => '',
+            'taxonomyId' => 1796,
+            'page' => 0,
+            'size' => 2,
+        ];
+        $request = $this->clientConnection->createRequest('get', 'mobile-services/product/search/v2?'.http_build_query($fields));
+
+        $response = $this->clientConnection->getJsonResponse($request);
+        foreach ($response->products as $product) {
+            var_dump($this->processObjectToProduct($product));
+        }
+    }
+
+    public function processObjectToProduct(object $object): Product
+    {
+        assert(is_int($object->webshopId));
+        assert(is_string($object->title));
+        assert(is_string($object->brand));
+
+        return new Product(
+            id: $object->webshopId,
+            title: $object->title,
+            brand: $object->brand
+        );
     }
 }
