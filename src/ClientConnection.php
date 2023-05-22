@@ -49,9 +49,9 @@ class ClientConnection extends \Microit\StoreBase\HttpClient
     {
         $response = $this->getResponse($request);
 
-//        var_dump($response->getStatusCode());
+        //        var_dump($response->getStatusCode());
         $contents = $response->getBody()->getContents();
-//        var_dump($contents);
+        //        var_dump($contents);
 
         $jsonResponse = json_decode($contents);
         if (is_null($jsonResponse)) {

@@ -8,7 +8,6 @@ class Product
         readonly int $id,
         readonly string $title,
         readonly ?string $brand
-    )
-    {
+    ) {
     }
 }
