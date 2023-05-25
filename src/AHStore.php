@@ -2,12 +2,13 @@
 
 namespace Microit\StoreAhApi;
 
+use Exception;
 use Microit\StoreAhApi\Models\Category;
 use Microit\StoreAhApi\Models\Image;
 use Microit\StoreAhApi\Models\Product;
-use Nyholm\Psr7\Stream;
+use Psr\Http\Client\ClientExceptionInterface;
 
-class AH
+class AHStore
 {
     protected ClientConnection $clientConnection;
     public function __construct()
@@ -19,7 +20,7 @@ class AH
 
     /**
      * @return Category[]
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      */
     public function getCategories(): array
     {
@@ -52,21 +53,45 @@ class AH
         return $categories;
     }
 
-    public function getProductsOfCategory(Category $category)
+    /**
+     * @param Category $category
+     * @return array
+     * @throws ClientExceptionInterface
+     */
+    public function getProductsOfCategory(Category $category): array
+    {
+        $rawProductsInformation = $this->requestProductSearch(category: $category);
+        $products = [];
+
+        foreach ($rawProductsInformation as $product) {
+            $products[] = $this->processObjectToProduct($product);
+        }
+
+        return $products;
+    }
+
+    /**
+     * @return array<array-key, object>
+     * @throws ClientExceptionInterface
+     * @throws Exception
+     */
+    public function requestProductSearch(string $query = '', string $sortOn = '', Category $category = null, int $page = 0, int $size = 100): array
     {
         $fields = [
-            'query' => '',
-            'sortOn' => '',
-            'taxonomyId' => 1796,
-            'page' => 0,
-            'size' => 2,
+            'query' => $query,
+            'sortOn' => $sortOn,
+            'taxonomyId' => $category?->getId(),
+            'page' => $page,
+            'size' => $size,
         ];
         $request = $this->clientConnection->createRequest('get', 'mobile-services/product/search/v2?'.http_build_query($fields));
 
         $response = $this->clientConnection->getJsonResponse($request);
-        foreach ($response->products as $product) {
-            var_dump($this->processObjectToProduct($product));
+        if (!is_object($response) || !is_array($response->products)) {
+            throw new Exception('Invalid response');
         }
+
+        return $response->products;
     }
 
     public function processObjectToProduct(object $object): Product

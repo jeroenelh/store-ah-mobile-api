@@ -5,9 +5,9 @@ namespace Microit\StoreAhApi\Models;
 class Product
 {
     public function __construct(
-        readonly int $id,
-        readonly string $title,
-        readonly ?string $brand
+        public readonly int $id,
+        public readonly string $title,
+        public readonly ?string $brand
     ) {
     }
 }

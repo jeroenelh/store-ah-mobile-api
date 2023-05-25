@@ -18,7 +18,8 @@
   },
   "require-dev": {
     "vimeo/psalm": "^5.11",
-    "friendsofphp/php-cs-fixer": "^3.16"
+    "friendsofphp/php-cs-fixer": "^3.16",
+    "phpmd/phpmd" : "@stable"
   },
   "config": {
     "allow-plugins": {

@@ -12,11 +12,11 @@ class ClientConnection extends \Microit\StoreBase\HttpClient
 {
     use Singleton;
 
-    protected AHApiToken $AHApiToken;
+    protected AHApiToken $ahApiToken;
     public function __construct()
     {
         parent::__construct('https://api.ah.nl/');
-        $this->AHApiToken = new AHApiToken();
+        $this->ahApiToken = new AHApiToken();
 
         //        $request = $this->createRequest('get', 'mobile-services/product/detail/v4/fir/wi233440');
         //        $request = $this->createRequest('get', 'mobile-services/bonuspage/v1/metadata');
@@ -36,8 +36,7 @@ class ClientConnection extends \Microit\StoreBase\HttpClient
         $request = $request->withAddedHeader('client-name', 'appie-android');
         $request = $request->withAddedHeader('client-version', '8.12');
         $request = $request->withAddedHeader('x-application', 'AHWEBSHOP');
-        $request = $request->withAddedHeader('authorization', 'Bearer '.$this->AHApiToken->getAccessToken());
-        return $request;
+        return $request->withAddedHeader('authorization', 'Bearer '.$this->ahApiToken->getAccessToken());
     }
 
     /**
@@ -49,9 +48,7 @@ class ClientConnection extends \Microit\StoreBase\HttpClient
     {
         $response = $this->getResponse($request);
 
-        //        var_dump($response->getStatusCode());
         $contents = $response->getBody()->getContents();
-        //        var_dump($contents);
 
         $jsonResponse = json_decode($contents);
         if (is_null($jsonResponse)) {

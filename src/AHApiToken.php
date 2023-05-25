@@ -2,8 +2,12 @@
 
 namespace Microit\StoreAhApi;
 
+use DateInterval;
+use DateTimeImmutable;
+use Exception;
 use Microit\StoreBase\HttpClient;
 use Nyholm\Psr7\Stream;
+use Psr\Http\Client\ClientExceptionInterface;
 
 class AHApiToken
 {
@@ -13,26 +17,28 @@ class AHApiToken
 
     protected string $refreshToken = '';
 
-    protected \DateTimeImmutable $expireDate;
+    protected DateTimeImmutable $expireDate;
 
+    /**
+     * @throws ClientExceptionInterface
+     */
     public function __construct()
     {
         $this->httpClient = new HttpClient('https://api.ah.nl/mobile-auth/v1/auth/token');
-        $this->expireDate = new \DateTimeImmutable();
+        $this->expireDate = new DateTimeImmutable();
         $this->renewToken();
     }
 
     /**
      * @return void
-     * @throws \Psr\Http\Client\ClientExceptionInterface
-     * @throws \Exception
+     * @throws ClientExceptionInterface
+     * @throws Exception
      */
     public function renewToken(): void
     {
+        $request = $this->httpClient->createRequest('post', 'anonymous');
         if (!empty($this->refreshToken)) {
             $request = $this->httpClient->createRequest('post', 'refresh');
-        } else {
-            $request = $this->httpClient->createRequest('post', 'anonymous');
         }
 
         $request = $request->withBody(Stream::create(json_encode([
@@ -44,22 +50,21 @@ class AHApiToken
         $response = $this->httpClient->getResponse($request);
 
         $jsonResponse = json_decode($response->getBody()->getContents());
-        if (is_null($jsonResponse)) {
-            throw new \Exception('Bad response');
-        }
+        assert(is_object($jsonResponse));
 
-        if (!is_object($jsonResponse)) {
-            throw new \Exception("Can't convert json to object");
-        }
+        $this->processTokenResponse($jsonResponse);
+    }
 
-        if (!isset($jsonResponse->access_token) || !isset($jsonResponse->refresh_token) || !isset($jsonResponse->expires_in)) {
-            throw new \Exception('Bad response');
-        }
+    private function processTokenResponse(object $jsonResponse): void
+    {
+        assert(isset($jsonResponse->access_token));
+        assert(isset($jsonResponse->refresh_token));
+        assert(isset($jsonResponse->expires_in));
 
         $this->accessToken = (string) $jsonResponse->access_token;
         $this->refreshToken = (string) $jsonResponse->refresh_token;
-        $interval = \DateInterval::createFromDateString((int) $jsonResponse->expires_in.' seconds');
-        $this->expireDate = (new \DateTimeImmutable())->add($interval);
+        $interval = DateInterval::createFromDateString((int) $jsonResponse->expires_in.' seconds');
+        $this->expireDate = (new DateTimeImmutable())->add($interval);
     }
 
     public function isValid(): bool
@@ -67,6 +72,9 @@ class AHApiToken
         return $this->expireDate->getTimestamp() > time();
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     */
     public function getAccessToken(): string
     {
         if (!$this->isValid()) {
