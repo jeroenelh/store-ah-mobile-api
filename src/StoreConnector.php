@@ -3,19 +3,19 @@
 namespace Microit\StoreAhApi;
 
 use Exception;
-use Microit\StoreAhApi\Models\Category;
-use Microit\StoreAhApi\Models\Image;
-use Microit\StoreAhApi\Models\Product;
+use Microit\StoreBase\Models\Category;
+use Microit\StoreBase\Models\Image;
+use Microit\StoreBase\Models\Product;
 use Psr\Http\Client\ClientExceptionInterface;
 
-class AHStore
+class StoreConnector
 {
-    protected ClientConnection $clientConnection;
+    protected HttpClient $httpClient;
     public function __construct()
     {
-        $connection = ClientConnection::getInstance();
-        assert($connection instanceof ClientConnection);
-        $this->clientConnection = $connection;
+        $connection = HttpClient::getInstance();
+        assert($connection instanceof HttpClient);
+        $this->httpClient = $connection;
     }
 
     /**
@@ -24,8 +24,8 @@ class AHStore
      */
     public function getCategories(): array
     {
-        $request = $this->clientConnection->createRequest('get', 'mobile-services/v1/product-shelves/categories');
-        $response = $this->clientConnection->getJsonResponse($request);
+        $request = $this->httpClient->createRequest('get', 'mobile-services/v1/product-shelves/categories');
+        $response = $this->httpClient->getJsonResponse($request);
 
         $categories = [];
         /** @var object $categoryResponse */
@@ -84,9 +84,9 @@ class AHStore
             'page' => $page,
             'size' => $size,
         ];
-        $request = $this->clientConnection->createRequest('get', 'mobile-services/product/search/v2?'.http_build_query($fields));
+        $request = $this->httpClient->createRequest('get', 'mobile-services/product/search/v2?'.http_build_query($fields));
 
-        $response = $this->clientConnection->getJsonResponse($request);
+        $response = $this->httpClient->getJsonResponse($request);
         if (!is_object($response) || !is_array($response->products)) {
             throw new Exception('Invalid response');
         }

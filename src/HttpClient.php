@@ -2,13 +2,12 @@
 
 namespace Microit\StoreAhApi;
 
+use Microit\StoreBase\Exceptions\InvalidResponseException;
 use Microit\StoreBase\Traits\Singleton;
-use Nyholm\Psr7\Stream;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\RequestInterface;
 
-class ClientConnection extends \Microit\StoreBase\HttpClient
+class HttpClient extends \Microit\StoreBase\HttpClient
 {
     use Singleton;
 
@@ -42,7 +41,8 @@ class ClientConnection extends \Microit\StoreBase\HttpClient
     /**
      * @param RequestInterface $request
      * @return object|array<array-key, mixed>
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws InvalidResponseException
      */
     public function getJsonResponse(RequestInterface $request): object|array
     {
@@ -51,12 +51,8 @@ class ClientConnection extends \Microit\StoreBase\HttpClient
         $contents = $response->getBody()->getContents();
 
         $jsonResponse = json_decode($contents);
-        if (is_null($jsonResponse)) {
-            throw new \Exception("Can't convert to json");
-        }
-
         if (!(is_object($jsonResponse) || is_array($jsonResponse))) {
-            throw new \Exception("Bad json response");
+            throw new InvalidResponseException("Can't convert to json");
         }
 
         return $jsonResponse;

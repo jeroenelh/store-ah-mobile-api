@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/jeroenelh/store-base.git",
-                "reference": "eebbcb7fce6b23e4f1af660266aead672efd6143"
+                "reference": "fcdf4c90c5a01a60e5659066a4f454fa97832300"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jeroenelh/store-base/zipball/eebbcb7fce6b23e4f1af660266aead672efd6143",
-                "reference": "eebbcb7fce6b23e4f1af660266aead672efd6143",
+                "url": "https://api.github.com/repos/jeroenelh/store-base/zipball/fcdf4c90c5a01a60e5659066a4f454fa97832300",
+                "reference": "fcdf4c90c5a01a60e5659066a4f454fa97832300",
                 "shasum": ""
             },
             "require": {
@@ -31,6 +31,7 @@
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.16",
+                "phpmd/phpmd": "@stable",
                 "vimeo/psalm": "^5.11"
             },
             "default-branch": true,
@@ -52,7 +53,7 @@
                 "issues": "https://github.com/jeroenelh/store-base/issues",
                 "source": "https://github.com/jeroenelh/store-base/tree/main"
             },
-            "time": "2023-05-20T07:19:46+00:00"
+            "time": "2023-05-25T22:17:43+00:00"
         },
         {
             "name": "nyholm/psr7",
