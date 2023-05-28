@@ -64,10 +64,11 @@ class StoreConnector
      */
     public function getProductsOfCategory(Category $category): ProductCollection
     {
-        $rawProductsInformation = $this->requestProductSearch(category: $category);
+        $searchResults = $this->requestProductSearch(category: $category, size: 500);
+
         $products = new ProductCollection();
 
-        foreach ($rawProductsInformation as $product) {
+        foreach ($searchResults->elements as $product) {
             assert(is_object($product));
             $products->add($this->processObjectToProduct($product));
         }
@@ -76,11 +77,11 @@ class StoreConnector
     }
 
     /**
-     * @return array<array-key, mixed>
+     * @return AHSearchResults
      * @throws ClientExceptionInterface
      * @throws Exception
      */
-    public function requestProductSearch(string $query = '', string $sortOn = '', Category $category = null, int $page = 0, int $size = 100): array
+    public function requestProductSearch(string $query = '', string $sortOn = '', Category $category = null, int $page = 0, int $size = 100): AHSearchResults
     {
         $fields = [
             'query' => $query,
@@ -92,11 +93,9 @@ class StoreConnector
         $request = $this->httpClient->createRequest('get', 'mobile-services/product/search/v2?'.http_build_query($fields));
 
         $response = $this->httpClient->getJsonResponse($request);
-        if (! is_object($response) || ! is_array($response->products)) {
-            throw new Exception('Invalid response');
-        }
+        assert(is_object($response));
 
-        return $response->products;
+        return AHSearchResults::process($response);
     }
 
     public function processObjectToProduct(object $object): Product
