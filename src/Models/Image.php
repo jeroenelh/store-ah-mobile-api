@@ -9,6 +9,5 @@ class Image
         public readonly ?int $width,
         public readonly ?int $height
     ) {
-
     }
 }

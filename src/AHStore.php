@@ -11,6 +11,7 @@ use Psr\Http\Client\ClientExceptionInterface;
 class AHStore
 {
     protected ClientConnection $clientConnection;
+
     public function __construct()
     {
         $connection = ClientConnection::getInstance();
@@ -87,7 +88,7 @@ class AHStore
         $request = $this->clientConnection->createRequest('get', 'mobile-services/product/search/v2?'.http_build_query($fields));
 
         $response = $this->clientConnection->getJsonResponse($request);
-        if (!is_object($response) || !is_array($response->products)) {
+        if (! is_object($response) || ! is_array($response->products)) {
             throw new Exception('Invalid response');
         }
 

@@ -9,10 +9,10 @@ class Category
 
     public function __construct(
         public readonly int|string|null $id = null,
-        public readonly ?string         $name = null,
-        public readonly ?string         $slug = null,
-        public readonly ?string         $url = null,
-        public readonly ?Image          $image = null,
+        public readonly ?string $name = null,
+        public readonly ?string $slug = null,
+        public readonly ?string $url = null,
+        public readonly ?Image $image = null,
     ) {
     }
 
@@ -41,16 +41,16 @@ class Category
         return $this->image;
     }
 
-    public function addCategory(Category $category): Category
+    public function addCategory(self $category): self
     {
-        if (!$this->hasCategory($category)) {
+        if (! $this->hasCategory($category)) {
             $this->categories[] = $category;
         }
 
         return $this;
     }
 
-    public function hasCategory(Category $category): bool
+    public function hasCategory(self $category): bool
     {
         return in_array($category, $this->categories);
     }
@@ -59,5 +59,4 @@ class Category
     {
         return $this->categories;
     }
-
 }

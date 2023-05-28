@@ -37,7 +37,7 @@ class AHApiToken
     public function renewToken(): void
     {
         $request = $this->httpClient->createRequest('post', 'anonymous');
-        if (!empty($this->refreshToken)) {
+        if (! empty($this->refreshToken)) {
             $request = $this->httpClient->createRequest('post', 'refresh');
         }
 
@@ -77,7 +77,7 @@ class AHApiToken
      */
     public function getAccessToken(): string
     {
-        if (!$this->isValid()) {
+        if (! $this->isValid()) {
             $this->renewToken();
         }
 
