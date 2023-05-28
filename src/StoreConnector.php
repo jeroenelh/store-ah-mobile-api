@@ -3,6 +3,9 @@
 namespace Microit\StoreAhApi;
 
 use Exception;
+use Microit\StoreBase\Collections\CategoryCollection;
+use Microit\StoreBase\Collections\ProductCollection;
+use Microit\StoreBase\Exceptions\InvalidResponseException;
 use Microit\StoreBase\Models\Category;
 use Microit\StoreBase\Models\Image;
 use Microit\StoreBase\Models\Product;
@@ -20,15 +23,15 @@ class StoreConnector
     }
 
     /**
-     * @return Category[]
-     * @throws ClientExceptionInterface
+     * @return CategoryCollection
+     * @throws ClientExceptionInterface|InvalidResponseException
      */
-    public function getCategories(): array
+    public function getCategories(): CategoryCollection
     {
         $request = $this->httpClient->createRequest('get', 'mobile-services/v1/product-shelves/categories');
         $response = $this->httpClient->getJsonResponse($request);
 
-        $categories = [];
+        $categories = new CategoryCollection();
         /** @var object $categoryResponse */
         foreach ($response as $categoryResponse) {
             assert(is_int($categoryResponse->id));
@@ -39,7 +42,7 @@ class StoreConnector
             assert(is_int($categoryResponse->images[0]->width));
             assert(is_int($categoryResponse->images[0]->height));
 
-            $categories[] = (new Category(
+            $categories->add(new Category(
                 id: $categoryResponse->id,
                 name: $categoryResponse->name,
                 slug: $categoryResponse->slugifiedName,
@@ -56,23 +59,24 @@ class StoreConnector
 
     /**
      * @param Category $category
-     * @return array
+     * @return ProductCollection
      * @throws ClientExceptionInterface
      */
-    public function getProductsOfCategory(Category $category): array
+    public function getProductsOfCategory(Category $category): ProductCollection
     {
         $rawProductsInformation = $this->requestProductSearch(category: $category);
-        $products = [];
+        $products = new ProductCollection();
 
         foreach ($rawProductsInformation as $product) {
-            $products[] = $this->processObjectToProduct($product);
+            assert(is_object($product));
+            $products->add($this->processObjectToProduct($product));
         }
 
         return $products;
     }
 
     /**
-     * @return array<array-key, object>
+     * @return array<array-key, mixed>
      * @throws ClientExceptionInterface
      * @throws Exception
      */
