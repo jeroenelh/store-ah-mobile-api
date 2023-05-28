@@ -6,6 +6,12 @@ use Microit\StoreBase\Exceptions\InvalidResponseException;
 
 class AHSearchResults
 {
+    /**
+     * @param array<array-key, mixed> $elements
+     * @param int $currentPage
+     * @param int $totalPages
+     * @param int $totalElements
+     */
     public function __construct(
         public readonly array $elements,
         public readonly int $currentPage,
@@ -20,14 +26,22 @@ class AHSearchResults
     }
 
     /**
+     * @return array<array-key, mixed>
+     */
+    public function getElements(): array
+    {
+        return $this->elements;
+    }
+
+    /**
      * @param object $rawOutput
      * @return AHSearchResults
      * @throws InvalidResponseException
      */
     public static function process(object $rawOutput): self
     {
-        $pageInfo = self::getPageInformation($rawOutput);
-        $elements = self::getElements($rawOutput);
+        $pageInfo = self::getPageInformationOfRawOutput($rawOutput);
+        $elements = self::getElementsOfRawOutput($rawOutput);
 
         return new self(
             elements: $elements,
@@ -42,7 +56,7 @@ class AHSearchResults
      * @return array{totalElements: int, totalPages: int}
      * @throws InvalidResponseException
      */
-    public static function getPageInformation(object $rawOutput): array
+    public static function getPageInformationOfRawOutput(object $rawOutput): array
     {
         if (
             ! assert(is_object($rawOutput->page)) ||
@@ -58,7 +72,7 @@ class AHSearchResults
         ];
     }
 
-    public static function getElements(object $rawOutput): array
+    public static function getElementsOfRawOutput(object $rawOutput): array
     {
         if (isset($rawOutput->products) && is_array($rawOutput->products)) {
             return $rawOutput->products;

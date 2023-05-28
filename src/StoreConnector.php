@@ -61,16 +61,26 @@ class StoreConnector
      * @param Category $category
      * @return ProductCollection
      * @throws ClientExceptionInterface
+     * @throws InvalidResponseException
      */
     public function getProductsOfCategory(Category $category): ProductCollection
     {
-        $searchResults = $this->requestProductSearch(category: $category, size: 500);
-
         $products = new ProductCollection();
+        $page = 0;
 
-        foreach ($searchResults->elements as $product) {
-            assert(is_object($product));
-            $products->add($this->processObjectToProduct($product));
+        while (true) {
+            $searchResults = $this->requestProductSearch(category: $category, page: $page, size: 500);
+
+            /** @var array|object $product */
+            foreach ($searchResults->getElements() as $product) {
+                assert(is_object($product));
+                $products->add($this->processObjectToProduct($product));
+            }
+
+            $page++;
+            if ($page > $searchResults->totalPages) {
+                break;
+            }
         }
 
         return $products;
@@ -81,7 +91,7 @@ class StoreConnector
      * @throws ClientExceptionInterface
      * @throws Exception
      */
-    public function requestProductSearch(string $query = '', string $sortOn = '', Category $category = null, int $page = 0, int $size = 100): AHSearchResults
+    private function requestProductSearch(string $query = '', string $sortOn = '', Category $category = null, int $page = 0, int $size = 100): AHSearchResults
     {
         $fields = [
             'query' => $query,
@@ -98,7 +108,7 @@ class StoreConnector
         return AHSearchResults::process($response);
     }
 
-    public function processObjectToProduct(object $object): Product
+    private function processObjectToProduct(object $object): Product
     {
         assert(is_int($object->webshopId));
         assert(is_string($object->title));
