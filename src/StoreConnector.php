@@ -11,6 +11,7 @@ use Psr\Http\Client\ClientExceptionInterface;
 class StoreConnector
 {
     protected HttpClient $httpClient;
+
     public function __construct()
     {
         $connection = HttpClient::getInstance();
@@ -87,7 +88,7 @@ class StoreConnector
         $request = $this->httpClient->createRequest('get', 'mobile-services/product/search/v2?'.http_build_query($fields));
 
         $response = $this->httpClient->getJsonResponse($request);
-        if (!is_object($response) || !is_array($response->products)) {
+        if (! is_object($response) || ! is_array($response->products)) {
             throw new Exception('Invalid response');
         }
 

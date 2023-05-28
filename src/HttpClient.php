@@ -12,6 +12,7 @@ class HttpClient extends \Microit\StoreBase\HttpClient
     use Singleton;
 
     protected AHApiToken $ahApiToken;
+
     public function __construct()
     {
         parent::__construct('https://api.ah.nl/');
@@ -35,6 +36,7 @@ class HttpClient extends \Microit\StoreBase\HttpClient
         $request = $request->withAddedHeader('client-name', 'appie-android');
         $request = $request->withAddedHeader('client-version', '8.12');
         $request = $request->withAddedHeader('x-application', 'AHWEBSHOP');
+
         return $request->withAddedHeader('authorization', 'Bearer '.$this->ahApiToken->getAccessToken());
     }
 
@@ -51,7 +53,7 @@ class HttpClient extends \Microit\StoreBase\HttpClient
         $contents = $response->getBody()->getContents();
 
         $jsonResponse = json_decode($contents);
-        if (!(is_object($jsonResponse) || is_array($jsonResponse))) {
+        if (! (is_object($jsonResponse) || is_array($jsonResponse))) {
             throw new InvalidResponseException("Can't convert to json");
         }
 
