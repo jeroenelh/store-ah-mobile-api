@@ -2,18 +2,16 @@
 
 namespace Microit\StoreAhApi;
 
-use Exception;
-use Microit\StoreBase\HttpClient;
+use Microit\StoreBase\Exceptions\InvalidResponseException;
 use Microit\StoreBase\Traits\Singleton;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Message\RequestInterface;
 
-class ClientConnection extends HttpClient
+class HttpClient extends \Microit\StoreBase\HttpClient
 {
     use Singleton;
 
     protected AHApiToken $ahApiToken;
-
     public function __construct()
     {
         parent::__construct('https://api.ah.nl/');
@@ -29,12 +27,6 @@ class ClientConnection extends HttpClient
         //        var_dump($this->getJsonResponse($request));
     }
 
-    /**
-     * @param string $method
-     * @param string $uri
-     * @return RequestInterface
-     * @throws ClientExceptionInterface
-     */
     public function createRequest(string $method, string $uri): RequestInterface
     {
         $request = parent::createRequest($method, $uri);
@@ -43,7 +35,6 @@ class ClientConnection extends HttpClient
         $request = $request->withAddedHeader('client-name', 'appie-android');
         $request = $request->withAddedHeader('client-version', '8.12');
         $request = $request->withAddedHeader('x-application', 'AHWEBSHOP');
-
         return $request->withAddedHeader('authorization', 'Bearer '.$this->ahApiToken->getAccessToken());
     }
 
@@ -51,7 +42,7 @@ class ClientConnection extends HttpClient
      * @param RequestInterface $request
      * @return object|array<array-key, mixed>
      * @throws ClientExceptionInterface
-     * @throws Exception
+     * @throws InvalidResponseException
      */
     public function getJsonResponse(RequestInterface $request): object|array
     {
@@ -60,12 +51,8 @@ class ClientConnection extends HttpClient
         $contents = $response->getBody()->getContents();
 
         $jsonResponse = json_decode($contents);
-        if (is_null($jsonResponse)) {
-            throw new Exception("Can't convert to json");
-        }
-
-        if (! (is_object($jsonResponse) || is_array($jsonResponse))) {
-            throw new Exception('Bad json response');
+        if (!(is_object($jsonResponse) || is_array($jsonResponse))) {
+            throw new InvalidResponseException("Can't convert to json");
         }
 
         return $jsonResponse;
