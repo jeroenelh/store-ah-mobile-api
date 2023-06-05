@@ -3,15 +3,15 @@
 namespace Microit\StoreAhApi;
 
 use Exception;
+use Microit\StoreAhApi\Processors\ProductProcessor;
 use Microit\StoreBase\Collections\CategoryCollection;
 use Microit\StoreBase\Collections\ProductCollection;
 use Microit\StoreBase\Exceptions\InvalidResponseException;
 use Microit\StoreBase\Models\Category;
 use Microit\StoreBase\Models\Image;
-use Microit\StoreBase\Models\Product;
 use Psr\Http\Client\ClientExceptionInterface;
 
-class StoreConnector
+class StoreConnector extends \Microit\StoreBase\StoreConnector
 {
     protected HttpClient $httpClient;
 
@@ -61,7 +61,6 @@ class StoreConnector
      * @param Category $category
      * @return ProductCollection
      * @throws ClientExceptionInterface
-     * @throws InvalidResponseException
      */
     public function getProductsOfCategory(Category $category): ProductCollection
     {
@@ -69,12 +68,35 @@ class StoreConnector
         $page = 0;
 
         while (true) {
-            $searchResults = $this->requestProductSearch(category: $category, page: $page, size: 500);
+            $searchResults = $this->requestProductSearch(query: '', category: $category, page: $page, size: 500);
 
             /** @var array|object $product */
             foreach ($searchResults->getElements() as $product) {
                 assert(is_object($product));
-                $products->add($this->processObjectToProduct($product));
+                $products->add((new ProductProcessor($product))->getProductObject());
+            }
+
+            $page++;
+            if ($page > $searchResults->totalPages) {
+                break;
+            }
+        }
+
+        return $products;
+    }
+
+    public function getProductsByName(string $name): ProductCollection
+    {
+        $products = new ProductCollection();
+        $page = 0;
+
+        while (true) {
+            $searchResults = $this->requestProductSearch(query: $name, page: $page, size: 500);
+
+            /** @var array|object $product */
+            foreach ($searchResults->getElements() as $product) {
+                assert(is_object($product));
+                $products->add((new ProductProcessor($product))->getProductObject());
             }
 
             $page++;
@@ -106,18 +128,5 @@ class StoreConnector
         assert(is_object($response));
 
         return AHSearchResults::process($response);
-    }
-
-    private function processObjectToProduct(object $object): Product
-    {
-        assert(is_int($object->webshopId));
-        assert(is_string($object->title));
-        assert(is_string($object->brand));
-
-        return new Product(
-            id: $object->webshopId,
-            title: $object->title,
-            brand: $object->brand
-        );
     }
 }
