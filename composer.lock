@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/jeroenelh/store-base.git",
-                "reference": "5a03362c900aad5161542ae5d7f018d13a18d007"
+                "reference": "08a7bc723e07593293a5b1c193fb74e2539c612b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jeroenelh/store-base/zipball/5a03362c900aad5161542ae5d7f018d13a18d007",
-                "reference": "5a03362c900aad5161542ae5d7f018d13a18d007",
+                "url": "https://api.github.com/repos/jeroenelh/store-base/zipball/08a7bc723e07593293a5b1c193fb74e2539c612b",
+                "reference": "08a7bc723e07593293a5b1c193fb74e2539c612b",
                 "shasum": ""
             },
             "require": {
@@ -53,7 +53,7 @@
                 "issues": "https://github.com/jeroenelh/store-base/issues",
                 "source": "https://github.com/jeroenelh/store-base/tree/main"
             },
-            "time": "2023-06-05T21:51:34+00:00"
+            "time": "2023-06-15T20:07:28+00:00"
         },
         {
             "name": "nyholm/psr7",
