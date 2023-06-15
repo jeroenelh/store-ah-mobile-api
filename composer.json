@@ -30,5 +30,17 @@
     "psalm": "./vendor/bin/psalm --no-cache",
     "php-cs-fixer": "./vendor/bin/php-cs-fixer fix --config=php-cs-fixer.php",
     "phpmd": "./vendor/bin/phpmd ./src text ./phpmd.xml"
+  },
+  "extra": {
+    "hooks": {
+      "pre-commit": [
+        "echo committing as $(git config user.name)",
+        "./vendor/bin/php-cs-fixer fix --config=php-cs-fixer.php"
+      ],
+      "pre-push": [
+        "./vendor/bin/php-cs-fixer fix --config=php-cs-fixer.php --dry-run"
+      ],
+      "post-merge": "composer update"
+    }
   }
 }
