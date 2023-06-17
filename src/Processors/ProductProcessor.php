@@ -5,6 +5,8 @@ namespace Microit\StoreAhApi\Processors;
 use Exception;
 use Microit\StoreBase\Collections\ImageCollection;
 use Microit\StoreBase\Enums\Currency;
+use Microit\StoreBase\Models\DiscountMechanisms\BuyAmountForSpecificPrice;
+use Microit\StoreBase\Models\DiscountMechanisms\PercentageDiscount;
 use Microit\StoreBase\Models\Image;
 use Microit\StoreBase\Models\Price;
 use Microit\StoreBase\Models\Product;
@@ -28,11 +30,55 @@ class ProductProcessor
 
     private function processPrices(): void
     {
+        $discountStrategies = [
+            'DISCOUNT_X_FOR_Y' => 'handleDiscountXForY',
+            'DISCOUNT_PERCENTAGE' => 'handleDiscountPercentage',
+        ];
+
         try {
             $this->product->addPrice(new Price($this->getCurrentPrice(), (string) $this->rawObject->salesUnitSize, Currency::EUR));
         } catch (Exception $exception) {
             // TODO implement logging here
         }
+
+        /** @var object $discountInfo */
+        foreach ($this->rawObject->discountLabels as $discountInfo) {
+            if (array_key_exists((string) $discountInfo->code, $discountStrategies)) {
+                $this->{$discountStrategies[(string) $discountInfo->code]}($discountInfo);
+            }
+        }
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
+    private function handleDiscountXForY(object $discountInfo): void
+    {
+        assert(is_float($discountInfo->price));
+        assert(is_int($discountInfo->count));
+
+        $price = new BuyAmountForSpecificPrice(
+            $discountInfo->price,
+            (string) $this->rawObject->salesUnitSize,
+            $discountInfo->count
+        );
+        $this->product->addPrice($price);
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
+    private function handleDiscountPercentage(object $discountInfo): void
+    {
+        assert(is_float($discountInfo->price));
+        assert(is_float($discountInfo->percentage));
+
+        $price = new PercentageDiscount(
+            $discountInfo->price,
+            (string) $this->rawObject->salesUnitSize,
+            $discountInfo->percentage
+        );
+        $this->product->addPrice($price);
     }
 
     /**
