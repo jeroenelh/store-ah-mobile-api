@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "48b258f3e086aaf190f370ecc3e7146c",
+    "content-hash": "e677d74da5179429ec9eca2a9b97d9b4",
     "packages": [
         {
             "name": "microit/store-base",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/jeroenelh/store-base.git",
-                "reference": "08a7bc723e07593293a5b1c193fb74e2539c612b"
+                "reference": "f2a3d393f191d28b76d5c21cd43897b0ff14d94f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jeroenelh/store-base/zipball/08a7bc723e07593293a5b1c193fb74e2539c612b",
-                "reference": "08a7bc723e07593293a5b1c193fb74e2539c612b",
+                "url": "https://api.github.com/repos/jeroenelh/store-base/zipball/f2a3d393f191d28b76d5c21cd43897b0ff14d94f",
+                "reference": "f2a3d393f191d28b76d5c21cd43897b0ff14d94f",
                 "shasum": ""
             },
             "require": {
@@ -30,12 +30,32 @@
                 "symfony/http-client": "^6.0"
             },
             "require-dev": {
+                "brainmaestro/composer-git-hooks": "dev-master",
                 "friendsofphp/php-cs-fixer": "^3.16",
                 "phpmd/phpmd": "@stable",
                 "vimeo/psalm": "^5.11"
             },
             "default-branch": true,
             "type": "library",
+            "extra": {
+                "hooks": {
+                    "config": {
+                        "stop-on-failure": [
+                            "pre-push"
+                        ]
+                    },
+                    "pre-commit": [
+                        "echo committing as $(git config user.name)",
+                        "./vendor/bin/php-cs-fixer fix --config=php-cs-fixer.php"
+                    ],
+                    "pre-push": [
+                        "./vendor/bin/php-cs-fixer fix --config=php-cs-fixer.php --dry-run --stop-on-violation",
+                        "composer run psalm",
+                        "composer run phpmd"
+                    ],
+                    "post-merge": "composer update"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Microit\\StoreBase\\": "src/"
@@ -53,7 +73,7 @@
                 "issues": "https://github.com/jeroenelh/store-base/issues",
                 "source": "https://github.com/jeroenelh/store-base/tree/main"
             },
-            "time": "2023-06-15T20:07:28+00:00"
+            "time": "2023-06-15T22:45:57+00:00"
         },
         {
             "name": "nyholm/psr7",
@@ -960,6 +980,80 @@
                 }
             ],
             "time": "2021-03-30T17:13:30+00:00"
+        },
+        {
+            "name": "brainmaestro/composer-git-hooks",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/BrainMaestro/composer-git-hooks.git",
+                "reference": "3d197c4c825266764831d8ea4d7c3cc9a0b0c786"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/BrainMaestro/composer-git-hooks/zipball/3d197c4c825266764831d8ea4d7c3cc9a0b0c786",
+                "reference": "3d197c4c825266764831d8ea4d7c3cc9a0b0c786",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0|^8.1",
+                "symfony/console": "^5.0|^6.0"
+            },
+            "require-dev": {
+                "ext-json": "*",
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "phpunit/phpunit": "^9.5"
+            },
+            "default-branch": true,
+            "bin": [
+                "cghooks"
+            ],
+            "type": "library",
+            "extra": {
+                "hooks": {
+                    "pre-commit": "composer check-style",
+                    "pre-push": [
+                        "composer test",
+                        "appver=$(grep -o -E '\\d.\\d.\\d(-alpha.\\d)?' cghooks)",
+                        "tag=$(git tag | tail -n 1)",
+                        "if [ \"$tag\" != \"v$appver\" ]; then",
+                        "echo \"The most recent tag $tag does not match the application version $appver\\n\"",
+                        "tag=${tag#v}",
+                        "sed -i -E \"s/$appver/$tag/\" cghooks",
+                        "exit 1",
+                        "fi"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "BrainMaestro\\GitHooks\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ezinwa Okpoechi",
+                    "email": "brainmaestro@outlook.com"
+                }
+            ],
+            "description": "Easily manage git hooks in your composer config",
+            "keywords": [
+                "HOOK",
+                "composer",
+                "git"
+            ],
+            "support": {
+                "issues": "https://github.com/BrainMaestro/composer-git-hooks/issues",
+                "source": "https://github.com/BrainMaestro/composer-git-hooks/tree/master"
+            },
+            "time": "2023-03-02T10:30:49+00:00"
         },
         {
             "name": "composer/pcre",
@@ -3911,7 +4005,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "microit/store-base": 20,
-        "phpmd/phpmd": 0
+        "phpmd/phpmd": 0,
+        "brainmaestro/composer-git-hooks": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
