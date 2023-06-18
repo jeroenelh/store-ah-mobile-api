@@ -1,6 +1,6 @@
 <?php
 
-namespace Microit\StoreAhApi;
+namespace Microit\StoreAhWebApi;
 
 use Microit\StoreBase\Exceptions\InvalidResponseException;
 use Microit\StoreBase\Traits\Singleton;
@@ -17,15 +17,6 @@ class HttpClient extends \Microit\StoreBase\HttpClient
     {
         parent::__construct('https://api.ah.nl/');
         $this->ahApiToken = new AHApiToken();
-
-        //        $request = $this->createRequest('get', 'mobile-services/product/detail/v4/fir/wi233440');
-        //        $request = $this->createRequest('get', 'mobile-services/bonuspage/v1/metadata');
-        //        $request = $this->createRequest('get', 'mobile-services/v1/product-shelves/categories');
-        //        $request = $this->createRequest('get', '/mobile-services/product/search/v2');
-        //        $request = $this->createRequest('get', '/mobile-services/product/search/v2?page=0&query=bier&sortOn=RELEVANCE');
-        //        $request = $request->withBody(Stream::create(json_encode(['category' => 'Diepvries'])));
-
-        //        var_dump($this->getJsonResponse($request));
     }
 
     public function createRequest(string $method, string $uri): RequestInterface

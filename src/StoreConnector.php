@@ -1,9 +1,9 @@
 <?php
 
-namespace Microit\StoreAhApi;
+namespace Microit\StoreAhWebApi;
 
 use Exception;
-use Microit\StoreAhApi\Processors\ProductProcessor;
+use Microit\StoreAhWebApi\Processors\ProductProcessor;
 use Microit\StoreBase\Collections\CategoryCollection;
 use Microit\StoreBase\Collections\ProductCollection;
 use Microit\StoreBase\Exceptions\InvalidResponseException;

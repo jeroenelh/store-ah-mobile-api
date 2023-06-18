@@ -1,9 +1,9 @@
 {
-  "name": "microit/store-ah-api",
+  "name": "microit/store-ah-web-api",
   "homepage": "https://micro-it.nl/",
   "autoload": {
     "psr-4": {
-      "Microit\\StoreAhApi\\": "src/"
+      "Microit\\StoreAhWebApi\\": "src/"
     }
   },
   "authors": [

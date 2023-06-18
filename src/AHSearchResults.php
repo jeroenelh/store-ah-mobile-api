@@ -1,6 +1,6 @@
 <?php
 
-namespace Microit\StoreAhApi;
+namespace Microit\StoreAhWebApi;
 
 use Microit\StoreBase\Exceptions\InvalidResponseException;
 
