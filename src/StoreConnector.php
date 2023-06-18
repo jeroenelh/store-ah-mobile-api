@@ -10,10 +10,14 @@ use Microit\StoreBase\Exceptions\InvalidResponseException;
 use Microit\StoreBase\Models\Category;
 use Microit\StoreBase\Models\Image;
 use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
-class StoreConnector extends \Microit\StoreBase\StoreConnector
+class StoreConnector extends \Microit\StoreBase\StoreConnector implements LoggerAwareInterface
 {
     protected HttpClient $httpClient;
+
+    protected ?LoggerInterface $logger = null;
 
     public function __construct()
     {
@@ -128,5 +132,10 @@ class StoreConnector extends \Microit\StoreBase\StoreConnector
         assert(is_object($response));
 
         return AHSearchResults::process($response);
+    }
+
+    public function setLogger(LoggerInterface $logger): void
+    {
+        $this->logger = $logger;
     }
 }
