@@ -1,5 +1,5 @@
 {
-  "name": "microit/store-ah-web-api",
+  "name": "microit/store-ah-mobile-api",
   "homepage": "https://micro-it.nl/",
   "autoload": {
     "psr-4": {
