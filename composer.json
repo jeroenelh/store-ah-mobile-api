@@ -3,7 +3,7 @@
   "homepage": "https://micro-it.nl/",
   "autoload": {
     "psr-4": {
-      "Microit\\StoreAhWebApi\\": "src/"
+      "Microit\\StoreAhMobileApi\\": "src/"
     }
   },
   "authors": [

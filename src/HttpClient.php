@@ -1,6 +1,6 @@
 <?php
 
-namespace Microit\StoreAhWebApi;
+namespace Microit\StoreAhMobileApi;
 
 use Microit\StoreBase\Exceptions\InvalidResponseException;
 use Microit\StoreBase\Traits\Singleton;

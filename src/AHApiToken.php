@@ -1,6 +1,6 @@
 <?php
 
-namespace Microit\StoreAhWebApi;
+namespace Microit\StoreAhMobileApi;
 
 use DateInterval;
 use DateTimeImmutable;

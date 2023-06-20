@@ -1,6 +1,6 @@
 <?php
 
-namespace Microit\StoreAhWebApi\Processors;
+namespace Microit\StoreAhMobileApi\Processors;
 
 use Exception;
 use Microit\StoreBase\Collections\ImageCollection;
